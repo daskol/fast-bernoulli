@@ -1,0 +1,4 @@
+*.npy binary
+*.npz binary
+
+*.ipynb linguist-vendored
