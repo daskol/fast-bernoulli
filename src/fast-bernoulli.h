@@ -68,6 +68,25 @@ private:
     double Proba_;
 };
 
-std::unique_ptr<IBernoulli> CreateBernoulliGenerator(double proba);
+class TSamplerPtr {
+public:
+    TSamplerPtr(void) noexcept = default;
+    TSamplerPtr(std::unique_ptr<IBernoulli> &&sampler) noexcept
+        : Sampler_{std::move(sampler)}
+    {}
+
+    inline bool operator()(TRng &rng, void *ptr, size_t size) noexcept {
+        return Sampler_->Generate(rng, ptr, size);
+    }
+
+    inline IBernoulli *get(void) noexcept {
+        return Sampler_.get();
+    }
+
+private:
+    std::unique_ptr<IBernoulli> Sampler_ = {};
+};
+
+TSamplerPtr CreateBernoulliGenerator(double proba);
 
 } // namespace NFastBernoulli

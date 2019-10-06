@@ -128,7 +128,7 @@ EStatus TDummyBernoulli::Generate(void *ptr, size_t size) noexcept {
     return EOk;
 }
 
-std::unique_ptr<IBernoulli> CreateBernoulliGenerator(double proba) {
+TSamplerPtr CreateBernoulliGenerator(double proba) {
     std::unique_ptr<IBernoulli> ptr;
     ptr.reset(new TDummyBernoulli(proba));
     return std::move(ptr);
