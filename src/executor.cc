@@ -10,6 +10,31 @@
 namespace NFastBernoulli {
 
 std::optional<TExecutionPlan> Quantize(double prob, double tol) noexcept {
+    TExecutionPlan plan{.NoSrcBlocks_ = 1};
+    double lhs = 0.0, rhs = 1.0;
+    for (auto it = plan.Ops_.begin(); it + 1 != plan.Ops_.end(); ++it) {
+        if (prob - lhs <= tol && rhs - prob <= tol) {
+            return plan;
+        }
+
+        double mid = lhs + 0.5 * (rhs - lhs);
+
+        if (mid == prob) {
+            return plan;
+        } else if (mid < prob) {
+            *it = EOp::Not;
+            ++it;
+            *it = EOp::And;
+            lhs = mid;
+            plan.NoOps_ += 2;
+            plan.NoSrcBlocks_++;
+        } else if (prob < mid) {
+            *it = EOp::And;
+            rhs = mid;
+            plan.NoOps_ += 1;
+            plan.NoSrcBlocks_++;
+        }
+    }
     return std::nullopt;
 }
 
