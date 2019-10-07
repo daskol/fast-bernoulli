@@ -156,3 +156,37 @@ TEST(AvxExecutor, SingleAnd) {
         EXPECT_EQ(dst[i], res[i]);
     }
 }
+
+TEST(ExecutorCreation, GeneralExecutor) {
+    std::array<uint64_t, 4> dst;
+    std::array<uint64_t, 4> src{0ul, 1ul, 2ul, 3ul};
+    std::array<uint64_t, 4> res{0ul, 1ul, 2ul, 3ul};
+    auto exe = NFastBernoulli::CreateExecutor(0.5, 1e-3);
+
+    ASSERT_TRUE(exe);
+
+    exe->Execute(src.data(), dst.data(), 1);
+
+    for (size_t i = 0; i != res.size(); ++i) {
+        EXPECT_EQ(dst[i], res[i]);
+    }
+}
+
+TEST(ExecutorCreation, AvxExecutor) {
+    alignas(64) std::array<uint64_t, 4> dst;
+    alignas(64) std::array<uint64_t, 4> src{0ul, 1ul, 2ul, 3ul};
+    alignas(64) std::array<uint64_t, 4> res{0ul, 1ul, 2ul, 3ul};
+    auto exe = NFastBernoulli::CreateExecutor({
+        .Probability_ = 0.5,
+        .Tolerance_ = 1e-3,
+        .Isa_ = NFastBernoulli::EInstructionSet::AVX,
+    });
+
+    ASSERT_TRUE(exe);
+
+    exe->Execute(src.data(), dst.data(), 1);
+
+    for (size_t i = 0; i != res.size(); ++i) {
+        EXPECT_EQ(dst[i], res[i]);
+    }
+}
