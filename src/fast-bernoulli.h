@@ -7,11 +7,9 @@
 #include <random>
 #include <memory>
 
-namespace NFastBernoulli {
+#include "cpuid.h"
 
-bool IsAVXSupported(void);
-bool IsMMXSupported(void);
-bool IsSSESupported(void);
+namespace NFastBernoulli {
 
 enum EStatus : uint32_t {
     EOk = 0,

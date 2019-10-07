@@ -6,7 +6,7 @@ find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CXX_SOURCES "executor.cc" "fast-bernoulli.cc")
+set(CXX_SOURCES "executor.cc" "fast-bernoulli.cc" "cpuid.cc")
 set(TEST_CXX_SOURCES "executor_test.cc" "fast-bernoulli_test.cc")
 set(BENCH_CXX_SOURCES "executor_bench.cc" "fast-bernoulli_bench.cc")
 

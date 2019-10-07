@@ -9,24 +9,6 @@
 
 namespace NFastBernoulli {
 
-bool IsAVXSupported(void) {
-    uint32_t eax, ebx, ecx, edx;
-    __get_cpuid(1, &eax, &ebx, &ecx, &edx);
-    return static_cast<bool>(ecx & bit_AVX);
-}
-
-bool IsMMXSupported(void) {
-    uint32_t eax, ebx, ecx, edx;
-    __get_cpuid(1, &eax, &ebx, &ecx, &edx);
-    return static_cast<bool>(edx & bit_MMX);
-}
-
-bool IsSSESupported(void) {
-    uint32_t eax, ebx, ecx, edx;
-    __get_cpuid(1, &eax, &ebx, &ecx, &edx);
-    return static_cast<bool>(edx & bit_SSE);
-}
-
 inline EStatus Validate(void *ptr, size_t size) {
     //  Pointer is not properly aligned.
     if (reinterpret_cast<size_t>(ptr) & 0b1111) {
