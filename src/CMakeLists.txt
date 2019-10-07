@@ -27,3 +27,5 @@ add_executable("${CMAKE_PROJECT_NAME}-bench" "${BENCH_CXX_SOURCES}"
                "$<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-obj>")
 target_link_libraries("${CMAKE_PROJECT_NAME}-bench"
                       PRIVATE benchmark::benchmark_main)
+
+add_test(NAME all COMMAND "${CMAKE_PROJECT_NAME}-test")
