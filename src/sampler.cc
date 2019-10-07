@@ -1,10 +1,9 @@
 /**
- * \file fast-bernoulli.cc
+ * \file sampler.cc
  */
 
-#include "fast-bernoulli.h"
+#include "sampler.h"
 
-#include <cpuid.h>
 #include <x86intrin.h>
 
 namespace NFastBernoulli {
@@ -23,7 +22,7 @@ inline EStatus Validate(void *ptr, size_t size) {
     return EOk;
 }
 
-EStatus TStdBernoulli::Generate(TRng &rng, void *ptr, size_t size) noexcept {
+EStatus TStdBernoulli::Sample(TRng &rng, void *ptr, size_t size) noexcept {
     if (auto status = Validate(ptr, size); status) {
         return status;
     }
@@ -40,7 +39,7 @@ EStatus TStdBernoulli::Generate(TRng &rng, void *ptr, size_t size) noexcept {
     return EOk;
 }
 
-EStatus TStdBernoulli::Generate(void *ptr, size_t size) noexcept {
+EStatus TStdBernoulli::Sample(void *ptr, size_t size) noexcept {
     if (auto status = Validate(ptr, size); status) {
         return status;
     }
@@ -48,7 +47,7 @@ EStatus TStdBernoulli::Generate(void *ptr, size_t size) noexcept {
     return EOk;
 }
 
-inline void GenerateAVX(void *ptr, size_t size) noexcept {
+inline void SampleAVX(void *ptr, size_t size) noexcept {
     __m256i ymm00 = _mm256_load_si256(static_cast<__m256i *>(ptr) + 0x00);
     __m256i ymm01 = _mm256_load_si256(static_cast<__m256i *>(ptr) + 0x01);
     __m256i ymm02 = _mm256_load_si256(static_cast<__m256i *>(ptr) + 0x02);
@@ -85,7 +84,7 @@ inline void GenerateAVX(void *ptr, size_t size) noexcept {
     _mm256_store_si256(static_cast<__m256i *>(ptr), ymm00);
 }
 
-EStatus TDummyBernoulli::Generate(TRng &rng, void *ptr, size_t size) noexcept {
+EStatus TDummyBernoulli::Sample(TRng &rng, void *ptr, size_t size) noexcept {
     if (auto status = Validate(ptr, size); status) {
         return status;
     }
@@ -97,23 +96,24 @@ EStatus TDummyBernoulli::Generate(TRng &rng, void *ptr, size_t size) noexcept {
         *it = rng();
     }
 
-    GenerateAVX(ptr, size);
+    SampleAVX(ptr, size);
     return EOk;
 }
 
-EStatus TDummyBernoulli::Generate(void *ptr, size_t size) noexcept {
+EStatus TDummyBernoulli::Sample(void *ptr, size_t size) noexcept {
     if (auto status = Validate(ptr, size); status) {
         return status;
     }
 
-    GenerateAVX(ptr, size);
+    SampleAVX(ptr, size);
     return EOk;
 }
 
-TSamplerPtr CreateBernoulliGenerator(double proba) {
-    std::unique_ptr<IBernoulli> ptr;
+TSamplerPtr CreateBernoulliSampler(double proba) {
+    std::unique_ptr<ISampler> ptr;
     ptr.reset(new TDummyBernoulli(proba));
     return std::move(ptr);
 }
 
 } // namespace NFastBernoulli
+

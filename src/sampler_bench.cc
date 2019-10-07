@@ -1,10 +1,10 @@
 /**
- * \file fast-bernoulli_bench.cc
+ * \file sampler.cc
  */
 
 #include <benchmark/benchmark.h>
 
-#include "fast-bernoulli.h"
+#include "sampler.h"
 
 static void BM_StdBernoulli(benchmark::State& state) {
     std::random_device rd;
@@ -19,7 +19,7 @@ static void BM_StdBernoulli(benchmark::State& state) {
     auto bernoulli = NFastBernoulli::TStdBernoulli(0.6);
 
     for (auto _ : state) {
-        bernoulli.Generate(rng, ptr, size);
+        bernoulli.Sample(rng, ptr, size);
     }
 }
 
@@ -38,7 +38,7 @@ static void BM_DummyBernoulli(benchmark::State& state) {
     auto bernoulli = NFastBernoulli::TDummyBernoulli(0.6);
 
     for (auto _ : state) {
-        bernoulli.Generate(rng, ptr, size);
+        bernoulli.Sample(rng, ptr, size);
     }
 }
 
