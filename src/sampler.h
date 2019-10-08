@@ -37,42 +37,6 @@ public:
     }
 };
 
-/**
- * Class TStdBernoulli implements block generator based on built-in sampler
- * from Bernoulli distribution which is based on sampling from uniform
- * distribution and comparision to threshold probability.
- */
-class TStdBernoulli : public ISampler {
-public:
-    TStdBernoulli(double proba) noexcept
-        : Dist_{proba}
-    {}
-
-    virtual EStatus Sample(TRng &rng, void *begin, size_t size) noexcept override;
-    virtual EStatus Sample(void *begin, size_t size) noexcept override;
-
-private:
-    std::bernoulli_distribution Dist_;
-};
-
-/**
- * Class TDummyBernoulli is a implementation from scratch which is based on the
- * original idea and uses AVX2 instrution set.
- */
-class TDummyBernoulli : public ISampler {
-public:
-    constexpr TDummyBernoulli(double proba) noexcept
-        : Proba_{proba}
-    {}
-
-    virtual ~TDummyBernoulli(void) = default;
-    virtual EStatus Sample(TRng &rng, void *begin, size_t size) noexcept override;
-    virtual EStatus Sample(void *begin, size_t size) noexcept override;
-
-private:
-    double Proba_;
-};
-
 class TSamplerPtr {
 public:
     TSamplerPtr(void) noexcept = default;
@@ -103,11 +67,11 @@ private:
 struct TSamplerOpts {
     double Probability_;
     double Tolerance_;
-    EInstructionSet Ise_;
+    EInstructionSet Ise_ = EInstructionSet::Auto;
+    bool UseStdSampler_ = false;
 };
 
-TSamplerPtr CreateBernoulliSampler(double proba);
-TSamplerPtr CreateSampler(double prob, double tol = 1e-3);
 TSamplerPtr CreateSampler(const TSamplerOpts &opts);
+TSamplerPtr CreateSampler(double prob, double tol = 1e-3);
 
 } // namespace NFastBernoulli
