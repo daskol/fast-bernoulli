@@ -8,6 +8,8 @@
 #include <memory>
 #include <optional>
 
+#include "common.h"
+
 namespace NFastBernoulli {
 
 constexpr size_t MaxPrecision = 64;
@@ -66,18 +68,10 @@ public:
     virtual void Execute(const void *src, void *dst, size_t noblocks) override;
 };
 
-enum EInstructionSet : uint8_t {
-    Auto = 0,
-    General,
-    AVX,
-    MMX,
-    SSE,
-};
-
 struct TExecutorOpts {
     double Probability_;
     double Tolerance_;
-    EInstructionSet Isa_ = Auto;
+    EInstructionSet Isa_ = EInstructionSet::Auto;
 };
 
 using TExecutorPtr = std::unique_ptr<IExecutor>;

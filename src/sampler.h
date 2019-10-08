@@ -7,6 +7,8 @@
 #include <random>
 #include <memory>
 
+#include "common.h"
+
 namespace NFastBernoulli {
 
 enum EStatus : uint32_t {
@@ -98,7 +100,14 @@ private:
     std::unique_ptr<ISampler> Sampler_ = {};
 };
 
+struct TSamplerOpts {
+    double Probability_;
+    double Tolerance_;
+    EInstructionSet Ise_;
+};
+
 TSamplerPtr CreateBernoulliSampler(double proba);
 TSamplerPtr CreateSampler(double prob, double tol = 1e-3);
+TSamplerPtr CreateSampler(const TSamplerOpts &opts);
 
 } // namespace NFastBernoulli

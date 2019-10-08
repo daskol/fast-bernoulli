@@ -157,7 +157,18 @@ size_t TBaseSampler::GetBufferSize(size_t nobits) const noexcept {
 }
 
 TSamplerPtr CreateSampler(double prob, double tol) {
-    if (auto executor = CreateExecutor(prob, tol); !executor) {
+    auto sampler = CreateSampler({.Probability_ = prob, .Tolerance_ = tol});
+    return std::move(sampler);
+}
+
+TSamplerPtr CreateSampler(const TSamplerOpts &opts) {
+    TExecutorOpts exeOpts{
+        .Probability_ = opts.Probability_,
+        .Tolerance_   = opts.Tolerance_,
+        .Isa_         = opts.Ise_,
+    };
+
+    if (auto executor = CreateExecutor(exeOpts); !executor) {
         return {};
     } else {
         std::unique_ptr<ISampler> ptr;

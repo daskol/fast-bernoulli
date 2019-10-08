@@ -44,15 +44,37 @@ static void BM_DummyBernoulli(benchmark::State& state) {
 
 BENCHMARK(BM_DummyBernoulli);
 
-static void BM_BaseSampler(benchmark::State &state) {
+using NFastBernoulli::EInstructionSet;
+
+static void BM_Sampler(benchmark::State &state, EInstructionSet ise) {
     NFastBernoulli::TRng rng;
-    auto sampler = NFastBernoulli::CreateSampler(0.5);
+    auto sampler = NFastBernoulli::CreateSampler({
+        .Probability_ = 0.6,
+        .Tolerance_   = 1e-3,
+        .Ise_         = ise,
+    });
     auto size = sampler.Get()->GetBufferSize();
-    auto buf = std::aligned_alloc(32, size);
+    auto nobytes = size * state.range(0);
+    auto buf = std::aligned_alloc(32, nobytes);
     for (auto _ : state) {
-        sampler(rng, buf, size);
+        sampler(rng, buf, nobytes);
     }
     std::free(buf);
+    state.SetBytesProcessed(state.range(0) * state.iterations());
 }
 
-BENCHMARK(BM_BaseSampler);
+static void BM_GenericSampler(benchmark::State &state) {
+    BM_Sampler(state, EInstructionSet::General);
+}
+
+BENCHMARK(BM_GenericSampler)
+        -> RangeMultiplier(2)
+        -> Range(1, 128);
+
+static void BM_AvxSampler(benchmark::State &state) {
+    BM_Sampler(state, NFastBernoulli::EInstructionSet::AVX);
+}
+
+BENCHMARK(BM_AvxSampler)
+        -> RangeMultiplier(2)
+        -> Range(1, 128);
