@@ -10,6 +10,10 @@ set(CXX_SOURCES "cpuid.cc" "executor.cc" "sampler.cc")
 set(TEST_CXX_SOURCES "executor_test.cc" "sampler_test.cc")
 set(BENCH_CXX_SOURCES "executor_bench.cc" "sampler_bench.cc")
 
+if (USE_ASAN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+endif()
+
 add_library("${CMAKE_PROJECT_NAME}-obj" OBJECT "${CXX_SOURCES}")
 target_compile_options("${CMAKE_PROJECT_NAME}-obj" PRIVATE "-mavx")
 target_compile_options("${CMAKE_PROJECT_NAME}-obj" PRIVATE "-mavx2")
