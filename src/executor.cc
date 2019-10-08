@@ -3,6 +3,7 @@
  */
 
 #include "executor.h"
+#include "cpuid.h"
 
 #include <exception>
 #include <x86intrin.h>
@@ -101,8 +102,21 @@ TExecutorPtr CreateExecutor(const TExecutorOpts &opts) noexcept {
     if (auto plan = Quantize(opts.Probability_, opts.Tolerance_); !plan) {
         return nullptr;
     } else {
+        EInstructionSet ise = opts.Isa_;
+
+        // Select optimal executor with respect to instruction excentions.
+        if (ise == EInstructionSet::Auto) {
+            if (IsAVXSupported()) {
+                ise = EInstructionSet::AVX;
+            } else if (IsSSESupported()) {
+                ise = EInstructionSet::SSE;
+            } else if (IsMMXSupported()) {
+                ise = EInstructionSet::MMX;
+            }
+        }
+
         std::unique_ptr<IExecutor> ptr;
-        switch (opts.Isa_) {
+        switch (ise) {
         case EInstructionSet::Auto:
         case EInstructionSet::General:
             ptr.reset(new TGeneralExecutor(std::move(*plan)));
