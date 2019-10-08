@@ -38,6 +38,10 @@ public:
     virtual ~IExecutor(void) = default;
     virtual void Execute(const void *src, void *dst, size_t noblocks) = 0;
 
+    TExecutionPlan const &Plan(void) const noexcept {
+        return Plan_;
+    }
+
 protected:
     TExecutionPlan Plan_;
 };

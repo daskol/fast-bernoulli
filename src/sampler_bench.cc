@@ -43,3 +43,16 @@ static void BM_DummyBernoulli(benchmark::State& state) {
 }
 
 BENCHMARK(BM_DummyBernoulli);
+
+static void BM_BaseSampler(benchmark::State &state) {
+    NFastBernoulli::TRng rng;
+    auto sampler = NFastBernoulli::CreateSampler(0.5);
+    auto size = sampler.Get()->GetBufferSize();
+    auto buf = std::aligned_alloc(32, size);
+    for (auto _ : state) {
+        sampler(rng, buf, size);
+    }
+    std::free(buf);
+}
+
+BENCHMARK(BM_BaseSampler);

@@ -11,8 +11,9 @@ namespace NFastBernoulli {
 
 enum EStatus : uint32_t {
     EOk = 0,
-    EWrongPtrAlignment = 1,
-    EWrongSizeAlignment = 2,
+    ENotImplemented,
+    EWrongPtrAlignment,
+    EWrongSizeAlignment,
 };
 
 using TRng = std::mt19937_64;
@@ -26,6 +27,12 @@ public:
     virtual ~ISampler(void) = default;
     virtual EStatus Sample(TRng &rng, void *begin, size_t size) noexcept = 0;
     virtual EStatus Sample(void *begin, size_t size) noexcept = 0;
+    virtual size_t GetBufferSize(size_t nobits = 256) const noexcept {
+        if (size_t rem = nobits % 256; rem != 0) {
+            nobits += 256 - rem;
+        }
+        return nobits / 8; // bytes
+    }
 };
 
 /**
@@ -71,11 +78,19 @@ public:
         : Sampler_{std::move(sampler)}
     {}
 
+    explicit inline operator bool(void) const noexcept {
+        return static_cast<bool>(Sampler_);
+    }
+
     inline bool operator()(TRng &rng, void *ptr, size_t size) noexcept {
         return Sampler_->Sample(rng, ptr, size);
     }
 
-    inline ISampler *get(void) noexcept {
+    inline bool operator()(void *ptr, size_t size) noexcept {
+        return Sampler_->Sample(ptr, size);
+    }
+
+    inline ISampler *Get(void) noexcept {
         return Sampler_.get();
     }
 
@@ -84,5 +99,6 @@ private:
 };
 
 TSamplerPtr CreateBernoulliSampler(double proba);
+TSamplerPtr CreateSampler(double prob, double tol = 1e-3);
 
 } // namespace NFastBernoulli

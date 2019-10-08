@@ -3,6 +3,7 @@
  */
 
 #include "sampler.h"
+#include "executor.h"
 
 #include <x86intrin.h>
 
@@ -113,6 +114,56 @@ TSamplerPtr CreateBernoulliSampler(double proba) {
     std::unique_ptr<ISampler> ptr;
     ptr.reset(new TDummyBernoulli(proba));
     return std::move(ptr);
+}
+
+class TBaseSampler : public ISampler {
+public:
+    TBaseSampler(TExecutorPtr &&executor) noexcept
+        : Executor_{std::move(executor)}
+    {}
+
+    virtual EStatus Sample(TRng &rng, void *ptr, size_t size) noexcept override;
+    virtual EStatus Sample(void *ptr, size_t size) noexcept override;
+    size_t GetBufferSize(size_t nobits) const noexcept override;
+
+private:
+    TExecutorPtr Executor_;
+};
+
+EStatus TBaseSampler::Sample(TRng &rng, void *ptr, size_t size) noexcept {
+    if (auto status = Validate(ptr, size); status) {
+        return status;
+    }
+
+    uint64_t *begin = static_cast<uint64_t *>(ptr);
+    uint64_t *end = begin + size / sizeof(uint64_t);
+
+    for (auto it = begin; it != end; ++it) {
+        *it = rng();
+    }
+
+    Executor_->Execute(ptr, ptr, 1);
+    return EOk;
+}
+
+EStatus TBaseSampler::Sample(void *ptr, size_t size) noexcept {
+    return ENotImplemented;
+}
+
+size_t TBaseSampler::GetBufferSize(size_t nobits) const noexcept {
+    size_t blockSize = ISampler::GetBufferSize(nobits);
+    size_t noblocks = Executor_->Plan().NoSrcBlocks_;
+    return blockSize * noblocks;
+}
+
+TSamplerPtr CreateSampler(double prob, double tol) {
+    if (auto executor = CreateExecutor(prob, tol); !executor) {
+        return {};
+    } else {
+        std::unique_ptr<ISampler> ptr;
+        ptr.reset(new TBaseSampler(std::move(executor)));
+        return std::move(ptr);
+    }
 }
 
 } // namespace NFastBernoulli
