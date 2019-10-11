@@ -41,8 +41,29 @@ TEST(Quantize, ThreeQuaters) {
     ASSERT_TRUE(plan);
     EXPECT_EQ(plan->NoSrcBlocks_, 2);
     EXPECT_EQ(plan->NoOps_, 2);
-    EXPECT_EQ(plan->Ops_[0], EOp::Not);
+    EXPECT_EQ(plan->Ops_[0], EOp::And);
+    EXPECT_EQ(plan->Ops_[1], EOp::Not);
+}
+
+TEST(Quantize, p625) {
+    auto plan = Quantize(0.625, 1e-6);
+    ASSERT_TRUE(plan);
+    EXPECT_EQ(plan->NoSrcBlocks_, 3);
+    EXPECT_EQ(plan->NoOps_, 4);
+    EXPECT_EQ(plan->Ops_[0], EOp::And);
+    EXPECT_EQ(plan->Ops_[1], EOp::Not);
+    EXPECT_EQ(plan->Ops_[2], EOp::And);
+    EXPECT_EQ(plan->Ops_[3], EOp::Not);
+}
+
+TEST(Quantize, p875) {
+    auto plan = Quantize(0.875, 1e-6);
+    ASSERT_TRUE(plan);
+    EXPECT_EQ(plan->NoSrcBlocks_, 3);
+    EXPECT_EQ(plan->NoOps_, 3);
+    EXPECT_EQ(plan->Ops_[0], EOp::And);
     EXPECT_EQ(plan->Ops_[1], EOp::And);
+    EXPECT_EQ(plan->Ops_[2], EOp::Not);
 }
 
 TEST(Quantize, TooPrecise) {
