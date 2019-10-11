@@ -109,3 +109,50 @@ static void BM_AvxSampler(benchmark::State &state) {
 BENCHMARK(BM_AvxSampler)
         -> RangeMultiplier(2)
         -> Range(1, 128);
+
+static void BM_JitSampler(benchmark::State &state, EInstructionSet ise) {
+    NFastBernoulli::TRng rng;
+    auto sampler = NFastBernoulli::CreateSampler({
+        .Probability_ = 0.6,
+        .Tolerance_   = 1e-3,
+        .Ise_         = ise,
+        .UseJit_      = true,
+    });
+
+    auto size = sampler.Get()->GetBufferSize();
+    auto nobytes = size * state.range(0);
+    aligned_ptr buf(std::aligned_alloc(32, nobytes), &std::free);
+    auto *ptr = buf.get();
+
+    for (auto _ : state) {
+        sampler(rng, ptr, nobytes);
+    }
+
+    EstimateThroughput(state);
+}
+
+/**
+ * Benchmark BM_JitGenericSampler estimates performance of implementation of
+ * the algorithm with generic instruction set without extensions which was
+ * compiled with JIT in run-time.
+ */
+static void BM_JitGenericSampler(benchmark::State &state) {
+    BM_Sampler(state, EInstructionSet::General);
+}
+
+BENCHMARK(BM_JitGenericSampler)
+        -> RangeMultiplier(2)
+        -> Range(1, 128);
+
+/**
+ * Benchmark BM_JitAvxSampler estimates performance of implementation of the
+ * algorithm with AVX2 vector instruction extensions which was compiled with
+ * JIT in run-time.
+ */
+static void BM_JitAvxSampler(benchmark::State &state) {
+    BM_JitSampler(state, NFastBernoulli::EInstructionSet::AVX);
+}
+
+BENCHMARK(BM_JitAvxSampler)
+        -> RangeMultiplier(2)
+        -> Range(1, 128);
