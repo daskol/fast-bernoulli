@@ -68,6 +68,7 @@ struct TSamplerOpts {
     double Probability_;
     double Tolerance_;
     EInstructionSet Ise_ = EInstructionSet::Auto;
+    bool UseJit_ = false;
     bool UseStdSampler_ = false;
 };
 

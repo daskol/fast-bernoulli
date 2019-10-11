@@ -125,6 +125,7 @@ TSamplerPtr CreateSampler(const TSamplerOpts &opts) {
         .Probability_ = opts.Probability_,
         .Tolerance_   = opts.Tolerance_,
         .Isa_         = opts.Ise_,
+        .UseJit_      = opts.UseJit_,
     };
 
     if (auto executor = CreateExecutor(exeOpts); !executor) {

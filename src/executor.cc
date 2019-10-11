@@ -3,11 +3,17 @@
  */
 
 #include "executor.h"
-#include "cpuid.h"
 
 #include <algorithm>
 #include <exception>
 #include <x86intrin.h>
+
+#ifdef USE_JIT_EXECUTOR
+#include "cpuid.h"
+#include "executor_jit.h"
+#else
+#include "cpuid.h"
+#endif
 
 namespace NFastBernoulli {
 
@@ -117,6 +123,14 @@ TExecutorPtr CreateExecutor(const TExecutorOpts &opts) noexcept {
             } else if (IsMMXSupported()) {
                 ise = EInstructionSet::MMX;
             }
+        }
+
+        if (opts.UseJit_) {
+#ifdef USE_JIT_EXECUTOR
+            return std::move(CreateJitExecutor(std::move(*plan), ise));
+#else
+            return nullptr;
+#endif
         }
 
         std::unique_ptr<IExecutor> ptr;

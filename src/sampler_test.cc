@@ -48,13 +48,14 @@ auto EstimateStatistics(IteratorType begin, IteratorType end) {
     return std::make_tuple(mean, std::sqrt(std / nobits));
 }
 
-void BootstrapStatistics(EInstructionSet ise, bool useStdLib = false) {
+void BootstrapStatistics(EInstructionSet ise, bool useJit, bool useStdLib) {
     TRng rng;
     auto prob = 0.6;
     auto sampler = CreateSampler({
         .Probability_   = prob,
         .Tolerance_     = 1e-5,
         .Ise_           = EInstructionSet::General,
+        .UseJit_        = useJit,
         .UseStdSampler_ = useStdLib,
     });
 
@@ -75,15 +76,29 @@ void BootstrapStatistics(EInstructionSet ise, bool useStdLib = false) {
 
 TEST(StatCorrectness, StdSampler) {
     SCOPED_TRACE("StdSampler");
-    BootstrapStatistics(EInstructionSet::Auto, true);
+    BootstrapStatistics(EInstructionSet::Auto, false, true);
 }
 
 TEST(StatCorrectness, GenericSampler) {
     SCOPED_TRACE("GenericSampler");
-    BootstrapStatistics(EInstructionSet::General);
+    BootstrapStatistics(EInstructionSet::General, false, false);
 }
 
 TEST(StatCorrectness, AvxSampler) {
     SCOPED_TRACE("AvxSampler");
-    BootstrapStatistics(EInstructionSet::AVX);
+    BootstrapStatistics(EInstructionSet::AVX, false, false);
 }
+
+#ifdef USE_JIT_EXECUTOR
+
+TEST(StatCorrectness, JitGenericSampler) {
+    SCOPED_TRACE("JitGenericSampler");
+    BootstrapStatistics(EInstructionSet::General, true, false);
+}
+
+TEST(StatCorrectness, JitAvxSampler) {
+    SCOPED_TRACE("JitAvxSampler");
+    BootstrapStatistics(EInstructionSet::AVX, true, false);
+}
+
+#endif

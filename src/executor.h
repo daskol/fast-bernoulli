@@ -72,6 +72,7 @@ struct TExecutorOpts {
     double Probability_;
     double Tolerance_;
     EInstructionSet Isa_ = EInstructionSet::Auto;
+    bool UseJit_ = false;
 };
 
 using TExecutorPtr = std::unique_ptr<IExecutor>;

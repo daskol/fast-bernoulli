@@ -92,7 +92,7 @@ void TJitExecutor::Execute(const void *src, void *dst, size_t noblocks) {
     auto *end = begin + noblocks * Plan_.NoSrcBlocks_;
     auto *res = static_cast<__m256i *>(dst);
     for (auto it = begin; it != end; it += Plan_.NoSrcBlocks_, ++res) {
-        JitFunction_(it, dst);
+        JitFunction_(it, res);
     }
 }
 
@@ -109,7 +109,21 @@ TExecutorPtr TJitExecutor::Create(const TExecutionPlan &plan,
         return nullptr;
     }
 
-    jtmb->getFeatures().AddFeature("avx");
+    // Add specific CPU features if required.
+    switch (ise) {
+    case EInstructionSet::MMX:
+        jtmb->getFeatures().AddFeature("mmx");
+        break;
+    case EInstructionSet::SSE:
+        jtmb->getFeatures().AddFeature("sse2");
+        break;
+    case EInstructionSet::AVX:
+        jtmb->getFeatures().AddFeature("avx2");
+        break;
+    default:
+        break;
+    }
+
     auto dl = jtmb->getDefaultDataLayoutForTarget();
 
     if (!dl) {

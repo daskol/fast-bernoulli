@@ -19,6 +19,7 @@ if (USE_LLVM AND LLVM_FOUND)
     set(CXX_SOURCES "${CXX_SOURCES}" "executor_jit.cc")
     set(TEST_CXX_SOURCES "${TEST_CXX_SOURCES}" "executor_jit_test.cc")
     set(LLVM_LIBS "LLVM")
+    add_definitions(-DUSE_JIT_EXECUTOR)
 endif()
 
 add_library("${CMAKE_PROJECT_NAME}-obj" OBJECT "${CXX_SOURCES}")
