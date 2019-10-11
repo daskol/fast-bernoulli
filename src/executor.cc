@@ -5,6 +5,7 @@
 #include "executor.h"
 #include "cpuid.h"
 
+#include <algorithm>
 #include <exception>
 #include <x86intrin.h>
 
@@ -36,6 +37,7 @@ std::optional<TExecutionPlan> Quantize(double prob, double tol) noexcept {
             plan.NoSrcBlocks_++;
         }
     }
+    std::reverse(plan.Ops_.begin(), plan.Ops_.begin() + plan.NoOps_);
     return std::nullopt;
 }
 
@@ -47,7 +49,7 @@ void TGeneralExecutor::Execute(const void *src, void *dst, size_t noblocks) {
     for (auto it = begin; it != end; ++it, ++res) {
         uint64_t value = *it;
         for (size_t ip = 0; ip != Plan_.NoOps_; ++ip) {
-            switch (Plan_.Ops_[Plan_.NoOps_ - ip - 1]) {
+            switch (Plan_.Ops_[ip]) {
             case EOp::Not:
                 value = ~value;
                 break;

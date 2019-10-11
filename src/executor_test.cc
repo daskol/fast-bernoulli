@@ -97,10 +97,10 @@ TEST(GeneralExecutor, SingleAnd) {
 TEST(GeneralExecutor, MultipleOps) {
     TGeneralExecutor({
         .Ops_         = {
-            EOp::Not, EOp::And, EOp::Not, EOp::And, EOp::And, EOp::Not,
             EOp::And, EOp::And, EOp::Not, EOp::And, EOp::And, EOp::Not,
             EOp::And, EOp::And, EOp::Not, EOp::And, EOp::And, EOp::Not,
-            EOp::And, EOp::And, EOp::Not, EOp::And, EOp::And,
+            EOp::And, EOp::And, EOp::Not, EOp::And, EOp::And, EOp::Not,
+            EOp::And, EOp::And, EOp::Not, EOp::And, EOp::Not,
         },
         .NoOps_       = 23,
         .NoSrcBlocks_ = 16,
@@ -158,9 +158,9 @@ TEST(AvxExecutor, SingleAnd) {
 }
 
 TEST(ExecutorCreation, GeneralExecutor) {
-    std::array<uint64_t, 4> dst;
-    std::array<uint64_t, 4> src{0ul, 1ul, 2ul, 3ul};
-    std::array<uint64_t, 4> res{0ul, 1ul, 2ul, 3ul};
+    alignas(64) std::array<uint64_t, 4> dst;
+    alignas(64) std::array<uint64_t, 4> src{0ul, 1ul, 2ul, 3ul};
+    alignas(64) std::array<uint64_t, 4> res{0ul, 1ul, 2ul, 3ul};
     auto exe = NFastBernoulli::CreateExecutor(0.5, 1e-3);
 
     ASSERT_TRUE(exe);
