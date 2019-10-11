@@ -73,19 +73,32 @@ public:
         : Executor_{std::move(executor)}
     {}
 
+    virtual size_t GetBufferSize(size_t nobits) const noexcept override;
+    size_t GetBlockSize(void) const noexcept;
+
     virtual EStatus Sample(TRng &rng, void *ptr, size_t size) noexcept override;
     virtual EStatus Sample(void *ptr, size_t size) noexcept override;
-    size_t GetBufferSize(size_t nobits) const noexcept override;
 
 private:
     TExecutorPtr Executor_;
 };
+
+size_t TBaseSampler::GetBlockSize(void) const noexcept {
+    return 32;
+}
+
+size_t TBaseSampler::GetBufferSize(size_t nobits) const noexcept {
+    size_t blockSize = ISampler::GetBufferSize(nobits);
+    size_t noblocks = Executor_->Plan().NoSrcBlocks_;
+    return blockSize * noblocks;
+}
 
 EStatus TBaseSampler::Sample(TRng &rng, void *ptr, size_t size) noexcept {
     if (auto status = Validate(ptr, size); status) {
         return status;
     }
 
+    size_t noblocks = size / Executor_->Plan().NoSrcBlocks_ / GetBlockSize();
     uint64_t *begin = static_cast<uint64_t *>(ptr);
     uint64_t *end = begin + size / sizeof(uint64_t);
 
@@ -93,18 +106,12 @@ EStatus TBaseSampler::Sample(TRng &rng, void *ptr, size_t size) noexcept {
         *it = rng();
     }
 
-    Executor_->Execute(ptr, ptr, 1);
+    Executor_->Execute(ptr, ptr, noblocks);
     return EOk;
 }
 
 EStatus TBaseSampler::Sample(void *ptr, size_t size) noexcept {
     return ENotImplemented;
-}
-
-size_t TBaseSampler::GetBufferSize(size_t nobits) const noexcept {
-    size_t blockSize = ISampler::GetBufferSize(nobits);
-    size_t noblocks = Executor_->Plan().NoSrcBlocks_;
-    return blockSize * noblocks;
 }
 
 TSamplerPtr CreateSampler(const TSamplerOpts &opts) {
