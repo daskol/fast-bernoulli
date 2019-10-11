@@ -4,7 +4,7 @@ project(fast-bernoulli VERSION 0.0.0 LANGUAGES CXX)
 
 find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
-find_package(LLVM 8.0.0)
+find_package(LLVM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CXX_SOURCES "cpuid.cc" "executor.cc" "sampler.cc")
@@ -16,6 +16,10 @@ if (USE_ASAN)
 endif()
 
 if (USE_LLVM AND LLVM_FOUND)
+    if (NOT ${LLVM_VERION_MAJOR} MATCHES 8 AND NOT ${LLVM_VERSION_MAJOR} MATCHES 9)
+        message(FATAL_ERROR "LLVM of version either 8 or 9 is supported.")
+    endif()
+
     set(CXX_SOURCES "${CXX_SOURCES}" "executor_jit.cc")
     set(TEST_CXX_SOURCES "${TEST_CXX_SOURCES}" "executor_jit_test.cc")
     set(LLVM_LIBS "LLVM")

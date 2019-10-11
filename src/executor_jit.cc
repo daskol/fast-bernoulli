@@ -82,8 +82,6 @@ bool GenerateCode(llvm::LLVMContext &context, llvm::Module &module,
     builder.CreateAlignedStore(acc, args[1], 32);
     builder.CreateRetVoid();
 
-    llvm::outs() << module;
-    llvm::verifyFunction(*func, &llvm::errs());
     return !llvm::verifyFunction(*func);
 }
 
@@ -96,17 +94,13 @@ void TJitExecutor::Execute(const void *src, void *dst, size_t noblocks) {
     }
 }
 
-TExecutorPtr TJitExecutor::Create(const TExecutionPlan &plan,
-                                  EInstructionSet ise) noexcept {
-    llvm::InitializeNativeTarget();
-    llvm::InitializeNativeTargetAsmParser();
-    llvm::InitializeNativeTargetAsmPrinter();
-
+llvm::Expected<std::unique_ptr<llvm::orc::LLJIT>> CreateLLJIT(
+    EInstructionSet ise
+) {
     auto jtmb = llvm::orc::JITTargetMachineBuilder::detectHost();
 
     if (!jtmb) {
-        llvm::errs() << "failed to detect host: " << jtmb.takeError() << '\n';
-        return nullptr;
+        return jtmb.takeError();
     }
 
     // Add specific CPU features if required.
@@ -124,14 +118,31 @@ TExecutorPtr TJitExecutor::Create(const TExecutionPlan &plan,
         break;
     }
 
+#if LLVM_VERSION_MAJOR == 8
     auto dl = jtmb->getDefaultDataLayoutForTarget();
 
     if (!dl) {
-        llvm::errs() << dl.takeError() << '\n';
-        return nullptr;
+        return dl.takeError();
     }
 
-    auto vm = llvm::orc::LLJIT::Create(*jtmb, *dl, 1);
+    return std::move(llvm::orc::LLJIT::Create(*jtmb, *dl, 1));
+#elif LLVM_VERSION_MAJOR == 9
+    auto builder = llvm::orc::LLJITBuilder();
+    builder.setJITTargetMachineBuilder(std::move(*jtmb));
+    builder.setNumCompileThreads(1);
+    return std::move(builder.create());
+#else
+#error "Unsupport LLVM version. Supported only LLVM 8 and LLVM 9."
+#endif
+}
+
+TExecutorPtr TJitExecutor::Create(const TExecutionPlan &plan,
+                                  EInstructionSet ise) noexcept {
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmParser();
+    llvm::InitializeNativeTargetAsmPrinter();
+
+    auto vm = CreateLLJIT(ise);
 
     if (!vm) {
         llvm::errs() << "failed to create LLJIT: " << vm.takeError() << '\n';
