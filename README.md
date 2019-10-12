@@ -81,4 +81,14 @@ TBD.
 
 ## Assembly
 
-TBD.
+Build dependencies are (a) compiler with support C++17, (b) CMake as
+build-system generator, (c) Make as default build system. Also building
+requires (d) Google GTest for testing, and (e) Google Benchmark for
+benchmarking. Optional dependency is (f) LLVM which provides JIT compiler
+facility.
+```bash
+    mkdir -p build/release
+    cmake ../.. -DCMAKE_BUILD_TYPE=Release -DUSE_LLVM=ON
+```
+LLVM is not required by default, so it could be turned on/off with option
+`-DUSE_LLVM=ON/OFF` (as it is shown on the snippet above).
