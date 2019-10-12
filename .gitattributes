@@ -3,4 +3,5 @@
 *.npz binary
 *.png binary
 
+*.h  linguist-vendored=cpp
 *.ipynb linguist-vendored
