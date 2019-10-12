@@ -4,6 +4,8 @@
 
 ## Benchmarking
 
+![Benchmark: bitrate vs number of blocks.](doc/benchmark-rate-vs-noblocks.png)
+
 ```
 2019-10-12 02:35:03
 Run on (4 X 3400 MHz CPU s)

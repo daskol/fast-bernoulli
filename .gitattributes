@@ -1,5 +1,6 @@
 *.json binary
 *.npy binary
 *.npz binary
+*.png binary
 
 *.ipynb linguist-vendored
