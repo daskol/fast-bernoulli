@@ -3,7 +3,7 @@
  */
 
 #include <benchmark/benchmark.h>
-#include "executor_testdata.inc"
+#include <array>
 #include "executor.h"
 
 template <typename ExecutorType>
@@ -21,8 +21,11 @@ static void BM_Executor(benchmark::State &state) {
         .NoSrcBlocks_ = 16,
     });
 
+    alignas(32) static std::array<uint64_t, 4> dst;
+    alignas(32) static std::array<uint64_t, 64> src;
+
     for (auto _ : state) {
-        exe.Execute(::src.data(), ::dst.data(), 1);
+        exe.Execute(src.data(), dst.data(), 1);
     }
 }
 

@@ -110,6 +110,8 @@ BENCHMARK(BM_AvxSampler)
         -> RangeMultiplier(2)
         -> Range(1, 128);
 
+#ifdef USE_JIT_EXCUTOR
+
 static void BM_JitSampler(benchmark::State &state, EInstructionSet ise) {
     NFastBernoulli::TRng rng;
     auto sampler = NFastBernoulli::CreateSampler({
@@ -156,3 +158,5 @@ static void BM_JitAvxSampler(benchmark::State &state) {
 BENCHMARK(BM_JitAvxSampler)
         -> RangeMultiplier(2)
         -> Range(1, 128);
+
+#endif
