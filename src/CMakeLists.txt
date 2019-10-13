@@ -26,6 +26,8 @@ if (USE_LLVM AND LLVM_FOUND)
     add_definitions(-DUSE_JIT_EXECUTOR)
 endif()
 
+configure_file("config.h.in" "config.h")
+
 add_library("${CMAKE_PROJECT_NAME}-obj" OBJECT "${CXX_SOURCES}")
 target_compile_options("${CMAKE_PROJECT_NAME}-obj" PRIVATE "-mavx")
 target_compile_options("${CMAKE_PROJECT_NAME}-obj" PRIVATE "-mavx2")
@@ -58,6 +60,8 @@ add_test(NAME all COMMAND "${CMAKE_PROJECT_NAME}-test")
 
 include(GNUInstallDirs)
 install(FILES "common.h" "cpuid.h" "fast-bernoulli.h" "sampler.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config.h"
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}")
 install(TARGETS "${CMAKE_PROJECT_NAME}-lib" EXPORT "${CMAKE_PROJECT_NAME}"
         LIBRARY
