@@ -101,10 +101,13 @@ could bring samples to common representation (vector of bools).
 
     using namespace NFastBernoulli;
 
-    // Create an instance of ISampler and make buffer for sampling.
+    // Assume 65536 bits with probability 0.6 should be generated.
     auto probability = 0.6;
+    auto nobits = 65536;
+
+    // Create an instance of ISampler and make buffer for sampling.
     auto sampler = CreateSampler(probability);
-    auto ptr = MakeAlignedPtr(sampler.Get()->GetBufferSize(nobits));
+    auto ptr = sampler.MakeBuffer(nobits);
 
     // Use Mersenne Twister as a pseudo-random number generator.
     std::mt19937_64 rng;

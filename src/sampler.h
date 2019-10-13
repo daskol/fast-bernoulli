@@ -91,6 +91,10 @@ public:
         return static_cast<bool>(Sampler_);
     }
 
+    inline bool operator()(TRng &rng, TAlignedPtr &ptr) noexcept {
+        return Sampler_->Sample(rng, ptr.Get(), ptr.Size());
+    }
+
     inline bool operator()(TRng &rng, void *ptr, size_t size) noexcept {
         return Sampler_->Sample(rng, ptr, size);
     }
@@ -99,8 +103,16 @@ public:
         return Sampler_->Sample(ptr, size);
     }
 
+    inline size_t GetBufferSize(size_t nobits) const noexcept {
+        return Sampler_->GetBufferSize(nobits);
+    }
+
     inline ISampler *Get(void) noexcept {
         return Sampler_.get();
+    }
+
+    inline TAlignedPtr MakeBuffer(size_t nobits) const noexcept {
+        return std::move(MakeAligned(GetBufferSize(nobits)));
     }
 
 private:
