@@ -6,6 +6,7 @@
 
 #include <random>
 #include <memory>
+#include <vector>
 
 #include "common.h"
 
@@ -59,6 +60,8 @@ private:
 };
 
 TAlignedPtr MakeAligned(size_t bytes) noexcept;
+
+std::vector<bool> Expand(const TAlignedPtr &ptr);
 
 /**
  * Class ISampler defines a common interface to any block generator of

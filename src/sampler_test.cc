@@ -12,6 +12,18 @@ using NFastBernoulli::EInstructionSet;
 using NFastBernoulli::TRng;
 using aligned_ptr = std::unique_ptr<void, decltype(&std::free)>;
 
+TEST(AlignedPtr, SimpleExpansion) {
+    auto ptr = NFastBernoulli::MakeAligned(1);
+    ptr.Get<uint8_t>()[0] = 0b10101010;
+    auto res = NFastBernoulli::Expand(ptr);
+
+    ASSERT_EQ(res.size(), 8);
+
+    for (size_t i = 0; i != 8; ++i) {
+        EXPECT_EQ(res[i], i % 2);
+    }
+}
+
 TEST(SamplerCreation, Base) {
     TRng rng;
     alignas(64) std::array<uint8_t, 32> buf;
