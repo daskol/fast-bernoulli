@@ -1,0 +1,26 @@
+/**
+ * \file config.h
+ */
+
+#include <tuple>
+
+#define FAST_BERNOULLI_VERSION          "@CMAKE_PROJECT_VERSION@"
+#define FAST_BERNOULLI_VERSION_MAJOR    @CMAKE_PROJECT_VERSION_MAJOR@
+#define FAST_BERNOULLI_VERSION_MINOR    @CMAKE_PROJECT_VERSION_MINOR@
+#define FAST_BERNOULLI_VERSION_PATCH    @CMAKE_PROJECT_VERSION_PATCH@
+
+namespace NFastBernoulli {
+
+constexpr static const char * kVersion = "@PROJECT_VERSION@";
+
+constexpr const char * GetVersionString(void) {
+    return kVersion;
+}
+
+constexpr auto GetVersion(void) {
+    return std::make_tuple(@CMAKE_PROJECT_VERSION_MAJOR@u,
+                           @CMAKE_PROJECT_VERSION_MINOR@u,
+                           @CMAKE_PROJECT_VERSION_PATCH@u);
+}
+
+} // namespace NFastBernoulli
