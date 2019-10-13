@@ -11,14 +11,54 @@
 
 namespace NFastBernoulli {
 
-enum EStatus : uint32_t {
-    EOk = 0,
-    ENotImplemented,
-    EWrongPtrAlignment,
-    EWrongSizeAlignment,
+using TRng = std::mt19937_64;
+
+/**
+ * Class TAlignedPtr is semantically similar to std::unique_ptr<>. The only
+ * difference that the pointer is assumed to be aligned. An instance of the
+ * class should not be created directly. Function MakeAligned() should be used
+ * instead.
+ */
+class TAlignedPtr {
+public:
+    TAlignedPtr(void) noexcept = default;
+    TAlignedPtr(void * ptr, size_t size) noexcept
+        : Ptr_{ptr, &std::free}
+        , Size_{size}
+    {}
+
+    explicit operator bool(void) const noexcept {
+        return static_cast<bool>(Ptr_);
+    }
+
+    void * Get(void) noexcept {
+        return Ptr_.get();
+    }
+
+    void * const Get(void) const noexcept {
+        return Ptr_.get();
+    }
+
+    template <typename T>
+    T * Get(void) noexcept {
+        return static_cast<T *>(Ptr_.get());
+    }
+
+    template <typename T>
+    T * const Get(void) const noexcept {
+        return static_cast<T * const>(Ptr_.get());
+    }
+
+    size_t Size(void) const noexcept {
+        return Size_;
+    }
+
+private:
+    std::unique_ptr<void, decltype(&std::free)> Ptr_ = {nullptr, &std::free};
+    std::size_t Size_ = 0;
 };
 
-using TRng = std::mt19937_64;
+TAlignedPtr MakeAligned(size_t bytes) noexcept;
 
 /**
  * Class ISampler defines a common interface to any block generator of

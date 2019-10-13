@@ -14,4 +14,11 @@ enum class EInstructionSet : uint8_t {
     SSE,
 };
 
+enum EStatus : uint32_t {
+    EOk = 0,
+    ENotImplemented,
+    EWrongPtrAlignment,
+    EWrongSizeAlignment,
+};
+
 } // namespace NFastBernoulli
