@@ -75,10 +75,6 @@ BM_JitGenericSampler/128         103482 ns    103431 ns        6735  37.7669 M/s
 BM_JitAvxSampler/128              55667 ns     55640 ns       12393  70.2053 M/s
 ```
 
-## Usage
-
-TBD.
-
 ## Assembly
 
 Build dependencies are (a) compiler with support C++17, (b) CMake as
@@ -92,3 +88,33 @@ facility.
 ```
 LLVM is not required by default, so it could be turned on/off with option
 `-DUSE_LLVM=ON/OFF` (as it is shown on the snippet above).
+
+## Usage
+
+The simplest way to construct sampler in C++ is just calling `CreateSampler()`
+routine with target probability. The function returns a functor which should be
+invoked with an instance of (P)RNG and aligned memory buffer. Finally, one
+could bring samples to common representation (vector of bools).
+
+```cpp
+    #include <fast-bernoulli/fast-bernoulli.h>
+
+    using namespace NFastBernoulli;
+
+    // Create an instance of ISampler and make buffer for sampling.
+    auto probability = 0.6;
+    auto sampler = CreateSampler(probability);
+    auto ptr = MakeAlignedPtr(sampler.Get()->GetBufferSize(nobits));
+
+    // Use Mersenne Twister as a pseudo-random number generator.
+    std::mt19937_64 rng;
+
+    // Draw samples from Bernoulli distribution.
+    sampler(rng, ptr);
+
+    // Expand compressed representation of random values to vector of bools.
+    auto values = Expand(ptr);
+```
+
+The function `CreateSampler()` is overrided in order to provide an advanced way
+to instantiate sampler with structure `TSamplerOpts`.
