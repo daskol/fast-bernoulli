@@ -55,7 +55,10 @@ JIT compiler infrastructure.
 
 ## Benchmarking
 
-![Benchmark: bitrate vs number of blocks.](doc/benchmark-rate-vs-noblocks.png)
+The only reason for creation of the project is efficient sampling. So, in this
+section we present some benchmarks of sampler in different configurations. One
+can see that the proposed implementation is ahead of standard Bernoulli sampler
+(prefix `Std` in table or figure).
 
 ```
 Run on (4 X 3400 MHz CPU s)
@@ -74,6 +77,12 @@ BM_AvxSampler/128                 71017 ns     70982 ns        9759  55.0314 M/s
 BM_JitGenericSampler/128         103482 ns    103431 ns        6735  37.7669 M/s
 BM_JitAvxSampler/128              55667 ns     55640 ns       12393  70.2053 M/s
 ```
+
+Since one of the aims is to generate bulks of random values, it is interesting
+to look at sampling efficiency in sense of bitrate with regards length of
+generated sequence.
+
+![Benchmark: bitrate vs number of blocks.](doc/benchmark-rate-vs-noblocks.png)
 
 ## Assembly
 
