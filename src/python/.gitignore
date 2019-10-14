@@ -1,0 +1,4 @@
+# Ignore all sources in C/C++
+*.c
+*.cc
+*.cpp
