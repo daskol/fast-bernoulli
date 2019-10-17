@@ -3,8 +3,7 @@
  */
 
 #include <benchmark/benchmark.h>
-
-#include "sampler.h"
+#include <fast-bernoulli/cc/sampler.h>
 
 using NFastBernoulli::EInstructionSet;
 using aligned_ptr = std::unique_ptr<void, decltype(&std::free)>;

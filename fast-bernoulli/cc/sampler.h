@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include "common.h"
+#include <fast-bernoulli/cc/common.h>
 
 namespace NFastBernoulli {
 

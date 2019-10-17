@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(fast-bernoulli VERSION 0.1.0)
+project(fast-bernoulli VERSION 0.1.1)
 enable_testing()
 
 option(USE_ASAN "Turn on Address Sanitizer (ASan)" OFF)
@@ -10,8 +10,12 @@ include(GNUInstallDirs)
 find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(LLVM)
-
 set(CMAKE_CXX_STANDARD 17)
+
+include_directories(
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
 
 if (USE_ASAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
@@ -27,4 +31,4 @@ if (USE_LLVM AND LLVM_FOUND)
     endif()
 endif()
 
-add_subdirectory(src)
+add_subdirectory(fast-bernoulli)

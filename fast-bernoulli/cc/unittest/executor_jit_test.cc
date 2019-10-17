@@ -2,9 +2,9 @@
  * \file executor_jit.cc
  */
 
-#include <gtest/gtest.h>
 #include <array>
-#include "executor_jit.h"
+#include <fast-bernoulli/cc/executor_jit.h>
+#include <gtest/gtest.h>
 
 using NFastBernoulli::CreateJitExecutor;
 using NFastBernoulli::EInstructionSet;

@@ -42,7 +42,7 @@ else
 fi
 
 echo -n "$(prefix) Run all tests..."
-output=$(src/fast-bernoulli-test --gtest_color=yes)
+output=$(fast-bernoulli/cc/unittest/fast-bernoulli-cc-test --gtest_color=yes)
 retcode=$?
 
 if [ $retcode -ne 0 ]; then

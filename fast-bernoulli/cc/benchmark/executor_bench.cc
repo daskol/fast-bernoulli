@@ -2,9 +2,9 @@
  * \file executor_bench.cc
  */
 
-#include <benchmark/benchmark.h>
 #include <array>
-#include "executor.h"
+#include <benchmark/benchmark.h>
+#include <fast-bernoulli/cc/executor.h>
 
 template <typename ExecutorType>
 static void BM_Executor(benchmark::State &state) {

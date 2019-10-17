@@ -2,9 +2,9 @@
  * \file executor_test.cc
  */
 
+#include <fast-bernoulli/cc/executor.h>
 #include <gtest/gtest.h>
 #include "executor_testdata.inc"
-#include "executor.h"
 
 using NFastBernoulli::EOp;
 using NFastBernoulli::TAvxExecutor;

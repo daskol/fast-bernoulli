@@ -2,10 +2,10 @@
  * \file sampler-test.cc
  */
 
-#include <gtest/gtest.h>
 #include <array>
 #include <cmath>
-#include "sampler.h"
+#include <fast-bernoulli/cc/sampler.h>
+#include <gtest/gtest.h>
 
 using NFastBernoulli::CreateSampler;
 using NFastBernoulli::EInstructionSet;
