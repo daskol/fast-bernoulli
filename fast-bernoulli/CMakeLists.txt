@@ -1,4 +1,5 @@
 add_subdirectory("cc")
+add_subdirectory("python")
 
 install(
     FILES "fast-bernoulli.h"

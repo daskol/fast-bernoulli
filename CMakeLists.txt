@@ -4,6 +4,7 @@ enable_testing()
 
 option(USE_ASAN "Turn on Address Sanitizer (ASan)" OFF)
 option(USE_LLVM "Turn on JIT compilation in run-time" OFF)
+option(BUILD_WHEEL "Build Python distribution" OFF)
 
 include(GNUInstallDirs)
 

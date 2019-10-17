@@ -9,7 +9,8 @@ from libcpp.vector cimport vector
 
 cdef extern from '<fast-bernoulli/fast-bernoulli.h>' namespace 'NFastBernoulli':
 
-    ctypedef mt19937_64 TRng
+    cdef cppclass TRng:
+        TRng(size_t seed)
 
     cdef cppclass TAlignedPtr:
         pass

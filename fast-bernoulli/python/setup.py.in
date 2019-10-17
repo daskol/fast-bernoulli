@@ -1,11 +1,20 @@
 #   encoding: utf8
 #   filename: setup.py
 
+from Cython.Build import cythonize
 from setuptools import find_packages, setup
+from setuptools.extension import Extension
+
+ext = Extension(
+    name='_fast_bernoulli',
+    sources=['_fast_bernoulli.pyx'],
+    extra_compile_args=['-std=c++17'],
+    language='c++',
+)
 
 setup(
     name='fast-bernoulli',
-    version='0.0.0',
+    version='@CMAKE_PROJECT_VERSION@',
     description='Fast generation of bernoulli-distributed random variables.',
     url='https://github.com/daskol/fast-bernoulli',
     author='Daniel Bershatsky',
@@ -17,4 +26,5 @@ setup(
         'License :: OSI Approved :: BSD',
         'Programming Language :: Python :: 3',
     ],
+    ext_modules=cythonize([ext], language_level=3, quiet=True),
 )
