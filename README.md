@@ -1,6 +1,6 @@
 # Fast Bernoulli
 
-*fast generation of long sequencies of bernoulli-distributed random variables*
+*fast generation of long sequences of Bernoulli-distributed random variables*
 
 ## Overview
 
@@ -8,8 +8,8 @@
 with a specific parameters. Performant Bernoulli samplers are highly useful in
 scientific and engineering fields: modeling, random graphs, coding theory, etc.
 
-The standard way to obtain Bernoulli distributed random value is samping from
-uniform distribution and thresholding with a parameter. The library expoits a
+The standard way to obtain Bernoulli distributed random value is sampling from
+uniform distribution and thresholding with a parameter. The library exploits a
 different property of Bernoulli random variables to attain better efficiency in
 the sense of (P)RNG invocations.
 
@@ -20,7 +20,7 @@ with any parameter can be approximated with a sequence of other Bernoulli
 random variables with different parameters and logical operators applied to the
 sequence. Set of logical operators is not constrained in general but this
 implementation is based on `and(&)` and `not(~)` operators. As soon as a target
-distribtion paramer is "quantized" in a sequence logical operators, one can
+distribution parameter is "quantized" in a sequence logical operators, one can
 apply the transformations to a sequence of random values in run-time to draw a
 sample.
 
@@ -37,7 +37,7 @@ especially for top-quality (P)RNG (mt19937 as example). So, the assumption
 allows to apply the described algorithm to bits of numbers obtained with
 (P)RNG.
 
-Another one improvement is rellated to implementation. Execution of a sequence
+Another one improvement is related to implementation. Execution of a sequence
 of logical operations on bits requires iterations in loop. Many iterations
 affect performance through context switch and (un)conditional branching. The
 best performance could be archived if distribution parameter or a set of
@@ -92,9 +92,9 @@ requires (d) Google GTest for testing, and (e) Google Benchmark for
 benchmarking. Optional dependency is (f) LLVM which provides JIT compiler
 facility.
 ```bash
-    mkdir -p build/release
-    cmake ../.. -DCMAKE_BUILD_TYPE=Release -DBUILD_WHEEL=ON -DUSE_LLVM=ON
-    make
+mkdir -p build/release && cd build/release
+cmake ../.. -DCMAKE_BUILD_TYPE=Release -DBUILD_WHEEL=ON -DUSE_LLVM=ON
+make
 ```
 LLVM is not required by default, so it could be turned on/off with option
 `-DUSE_LLVM=ON/OFF` (as it is shown on the snippet above). Option `BUILD_WHEEL`
@@ -103,7 +103,7 @@ triggers building of Python bindings which could be find in directory
 to a set of default targets, so one should to run building of target
 `fast-bernoulli-python-wheel` in advance.
 ```bash
-    make fast-bernoulli-python-wheel
+make fast-bernoulli-python-wheel
 ```
 
 ## Usage
@@ -114,29 +114,29 @@ invoked with an instance of (P)RNG and aligned memory buffer. Finally, one
 could bring samples to common representation (vector of bools).
 
 ```cpp
-    #include <fast-bernoulli/fast-bernoulli.h>
+#include <fast-bernoulli/fast-bernoulli.h>
 
-    using namespace NFastBernoulli;
+using namespace NFastBernoulli;
 
-    // Assume 65536 bits with probability 0.6 should be generated.
-    auto probability = 0.6;
-    auto nobits = 65536;
+// Assume 65536 bits with probability 0.6 should be generated.
+auto probability = 0.6;
+auto nobits = 65536;
 
-    // Create an instance of ISampler and make buffer for sampling.
-    auto sampler = CreateSampler(probability);
-    auto ptr = sampler.MakeBuffer(nobits);
+// Create an instance of ISampler and make buffer for sampling.
+auto sampler = CreateSampler(probability);
+auto ptr = sampler.MakeBuffer(nobits);
 
-    // Use Mersenne Twister as a pseudo-random number generator.
-    std::mt19937_64 rng;
+// Use Mersenne Twister as a pseudo-random number generator.
+std::mt19937_64 rng;
 
-    // Draw samples from Bernoulli distribution.
-    sampler(rng, ptr);
+// Draw samples from Bernoulli distribution.
+sampler(rng, ptr);
 
-    // Expand compressed representation of random values to vector of bools.
-    auto values = Expand(ptr, nobits);
+// Expand compressed representation of random values to vector of bools.
+auto values = Expand(ptr, nobits);
 ```
 
-The function `CreateSampler()` is overrided in order to provide an advanced way
+The function `CreateSampler()` is overridden in order to provide an advanced way
 to instantiate sampler with structure `TSamplerOpts`.
 
 Also, the library delivers Python bindings and an extremely simple usage
@@ -144,14 +144,14 @@ interface. Module `fast_bernoulli` provides function `sample()` which generates
 random bits and returns memory view on resulting buffer of type `ui8`.
 
 ```python
-    import numpy as np
-    import fast_bernoulli as fb
+import numpy as np
+import fast_bernoulli as fb
 
-    # Assume 65536 bits with probability 0.6 should be generated.
-    probability = 0.6;
-    nobits = 65536;
+# Assume 65536 bits with probability 0.6 should be generated.
+probability = 0.6;
+nobits = 65536;
 
-    # Draw samples from Bernoulli distribution. JIT is used.
-    res = fb.sample(probability, nobits, seed=42, jit=True)  # memoryview
-    arr = np.array(res)  # np.ndarray with dtype=np.uint8
+# Draw samples from Bernoulli distribution. JIT is used.
+res = fb.sample(probability, nobits, seed=42, jit=True)  # memoryview
+arr = np.array(res)  # np.ndarray with dtype=np.uint8
 ```
