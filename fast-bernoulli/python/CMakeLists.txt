@@ -8,6 +8,11 @@ if (BUILD_WHEEL AND NOT Python3_Development_FOUND)
     message(FATAL_ERROR "Python3 is not found.")
 endif()
 
+if (USE_LLVM AND LLVM_FOUND)
+    set(LINK_LLVM_LIBS "-lLLVM")
+endif()
+
+
 set_target_properties("fast-bernoulli-cc" PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
 
@@ -23,6 +28,7 @@ add_custom_command(
             "-t${CMAKE_CURRENT_BINARY_DIR}"
             "-I${CMAKE_SOURCE_DIR}:${CMAKE_BINARY_DIR}"
             "-O${CMAKE_BINARY_DIR}/fast-bernoulli/cc/${CMAKE_STATIC_LIBRARY_PREFIX}fast-bernoulli-cc${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            "${LINK_LLVM_LIBS}"
         "bdist_wheel"
             "-b${CMAKE_CURRENT_BINARY_DIR}/build"
             "-d${CMAKE_CURRENT_BINARY_DIR}"

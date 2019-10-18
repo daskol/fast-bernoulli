@@ -13,17 +13,8 @@ TAlignedPtr MakeAligned(size_t bytes) noexcept {
     return TAlignedPtr(std::aligned_alloc(32, bytes), bytes);
 }
 
-std::vector<bool> Expand(const TAlignedPtr &ptr) {
-    std::vector<bool> expansion;
-    auto begin = static_cast<const uint8_t *>(ptr.Get());
-    auto end = begin + ptr.Size();
-    for (auto it = begin; it != end; ++it) {
-        for (size_t shift = 0; shift != 8; ++shift) {
-            bool bit = ((*it) >> shift) & 1u;
-            expansion.push_back(bit);
-        }
-    }
-    return expansion;
+std::vector<bool> Expand(const TAlignedPtr &ptr, size_t nobits) {
+    return std::move(Expand<bool>(ptr, nobits));
 }
 
 inline EStatus Validate(void *ptr, size_t size) {

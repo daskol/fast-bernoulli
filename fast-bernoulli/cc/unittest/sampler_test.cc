@@ -15,7 +15,7 @@ using aligned_ptr = std::unique_ptr<void, decltype(&std::free)>;
 TEST(AlignedPtr, SimpleExpansion) {
     auto ptr = NFastBernoulli::MakeAligned(1);
     ptr.Get<uint8_t>()[0] = 0b10101010;
-    auto res = NFastBernoulli::Expand(ptr);
+    auto res = NFastBernoulli::Expand(ptr, 8);
 
     ASSERT_EQ(res.size(), 8);
 

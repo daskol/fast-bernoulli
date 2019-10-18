@@ -61,7 +61,21 @@ private:
 
 TAlignedPtr MakeAligned(size_t bytes) noexcept;
 
-std::vector<bool> Expand(const TAlignedPtr &ptr);
+std::vector<bool> Expand(const TAlignedPtr &ptr, size_t nobits = 256);
+
+template <typename T>
+std::vector<T> Expand(const TAlignedPtr &ptr, size_t nobits = 256) {
+    std::vector<T> expansion;
+    auto begin = static_cast<const uint8_t *>(ptr.Get());
+    auto end = begin + nobits / 8;
+    for (auto it = begin; it != end; ++it) {
+        for (size_t shift = 0; shift != 8; ++shift) {
+            T bit = static_cast<T>(((*it) >> shift) & 1u);
+            expansion.push_back(bit);
+        }
+    }
+    return expansion;
+}
 
 /**
  * Class ISampler defines a common interface to any block generator of
