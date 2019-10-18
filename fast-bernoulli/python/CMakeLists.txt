@@ -37,6 +37,6 @@ add_custom_command(
         "egg_info"
             "-e${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "Built python extension and make wheel distribution"
-    DEPENDS "fast-bernoulli-cc" "_fast_bernoulli.pyx"
+    DEPENDS "fast-bernoulli-cc" "fast_bernoulli.pyx"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )

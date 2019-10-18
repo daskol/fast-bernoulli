@@ -51,7 +51,7 @@ JIT compiler infrastructure.
 - [x] Vectorization with AVX.
 - [x] JIT compilation with LLVM.
 - [x] Thread-safe.
-- [ ] Python bindings.
+- [x] Python bindings.
 
 ## Benchmarking
 
@@ -93,10 +93,18 @@ benchmarking. Optional dependency is (f) LLVM which provides JIT compiler
 facility.
 ```bash
     mkdir -p build/release
-    cmake ../.. -DCMAKE_BUILD_TYPE=Release -DUSE_LLVM=ON
+    cmake ../.. -DCMAKE_BUILD_TYPE=Release -DBUILD_WHEEL=ON -DUSE_LLVM=ON
+    make
 ```
 LLVM is not required by default, so it could be turned on/off with option
-`-DUSE_LLVM=ON/OFF` (as it is shown on the snippet above).
+`-DUSE_LLVM=ON/OFF` (as it is shown on the snippet above). Option `BUILD_WHEEL`
+triggers building of Python bindings which could be find in directory
+`fast-bernoulli/python/`. Target for building Python bindings is not included
+to a set of default targets, so one should to run building of target
+`fast-bernoulli-python-wheel` in advance.
+```bash
+    make fast-bernoulli-python-wheel
+```
 
 ## Usage
 
@@ -125,8 +133,25 @@ could bring samples to common representation (vector of bools).
     sampler(rng, ptr);
 
     // Expand compressed representation of random values to vector of bools.
-    auto values = Expand(ptr);
+    auto values = Expand(ptr, nobits);
 ```
 
 The function `CreateSampler()` is overrided in order to provide an advanced way
 to instantiate sampler with structure `TSamplerOpts`.
+
+Also, the library delivers Python bindings and an extremely simple usage
+interface. Module `fast_bernoulli` provides function `sample()` which generates
+random bits and returns memory view on resulting buffer of type `ui8`.
+
+```python
+    import numpy as np
+    import fast_bernoulli as fb
+
+    # Assume 65536 bits with probability 0.6 should be generated.
+    probability = 0.6;
+    nobits = 65536;
+
+    # Draw samples from Bernoulli distribution. JIT is used.
+    res = fb.sample(probability, nobits, seed=42, jit=True)  # memoryview
+    arr = np.array(res)  # np.ndarray with dtype=np.uint8
+```

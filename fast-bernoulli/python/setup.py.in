@@ -6,8 +6,8 @@ from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
 ext = Extension(
-    name='_fast_bernoulli',
-    sources=['_fast_bernoulli.pyx'],
+    name='fast_bernoulli',
+    sources=['fast_bernoulli.pyx'],
     extra_compile_args=['-std=c++17'],
     language='c++',
 )

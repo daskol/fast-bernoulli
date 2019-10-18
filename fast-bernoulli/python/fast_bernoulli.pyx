@@ -1,6 +1,6 @@
 #   encoding: utf8
-#   filename: _fast_bernoulli.pyx
-"""Module _fast_bernoulli provides bindings to native implementation of
+#   filename: fast_bernoulli.pyx
+"""Module fast_bernoulli provides bindings to native implementation of
 Bernoulli sampler.
 """
 
