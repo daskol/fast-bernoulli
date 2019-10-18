@@ -83,7 +83,7 @@ void TAvxExecutor::Execute(const void *src, void *dst, size_t noblocks) {
     for (auto it = begin; it != end; ++it, ++res) {
         ymm00 = _mm256_load_si256(it);
         for (size_t ip = 0; ip != Plan_.NoOps_; ++ip) {
-            switch (Plan_.Ops_[Plan_.NoOps_ - ip - 1]) {
+            switch (Plan_.Ops_[ip]) {
             case EOp::Not:
                 ymm01 = _mm256_set1_epi64x(-1l);
                 ymm00 = _mm256_xor_si256(ymm00, ymm01);
