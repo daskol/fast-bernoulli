@@ -1,3 +1,9 @@
+if (NOT BUILD_TESTS)
+    return()
+endif()
+
+find_package(GTest REQUIRED)
+
 add_executable("fast-bernoulli-cc-test")
 add_test(NAME "fast-bernoulli-cc-test" COMMAND "fast-bernoulli-cc-test")
 

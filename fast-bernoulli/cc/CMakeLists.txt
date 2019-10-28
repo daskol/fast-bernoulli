@@ -2,7 +2,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory("benchmark")
 add_subdirectory("unittest")
-add_library("fast-bernoulli-cc" STATIC)
+add_library("fast-bernoulli-cc" SHARED)
 
 configure_file("config.h.in" "config.h")
 
@@ -40,7 +40,6 @@ install(
 install(
     TARGETS "fast-bernoulli-cc" EXPORT "${CMAKE_PROJECT_NAME}"
     LIBRARY
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/lib${CMAKE_PROJECT_NAME}.a"
 )
 
 install(

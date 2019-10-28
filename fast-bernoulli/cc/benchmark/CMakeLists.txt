@@ -1,3 +1,9 @@
+if (NOT BUILD_BENCHMARKS)
+    return()
+endif()
+
+find_package(benchmark REQUIRED)
+
 add_executable("fast-bernoulli-cc-bench")
 add_test(NAME "fast-bernoulli-cc-bench" COMMAND "fast-bernoulli-cc-bench")
 

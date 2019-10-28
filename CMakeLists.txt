@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
-project(fast-bernoulli VERSION 0.1.1)
+project(fast-bernoulli VERSION 0.2.0)
 enable_testing()
 
 option(USE_ASAN "Turn on Address Sanitizer (ASan)" OFF)
 option(USE_LLVM "Turn on JIT compilation in run-time" OFF)
 option(BUILD_WHEEL "Build Python distribution" OFF)
+option(BUILD_BENCHMARKS "Build benchmarks " OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
 include(GNUInstallDirs)
 
-find_package(GTest REQUIRED)
-find_package(benchmark REQUIRED)
 find_package(LLVM)
 set(CMAKE_CXX_STANDARD 17)
 
